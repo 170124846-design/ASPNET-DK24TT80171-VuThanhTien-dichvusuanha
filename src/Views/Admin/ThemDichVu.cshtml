@@ -1,0 +1,102 @@
+﻿@* ============================================================
+   FILE: ThemDichVu.cshtml
+   MỤC ĐÍCH: Form thêm dịch vụ mới (dành cho Admin)
+   ✅ CÓ THỂ THAY ĐỔI: Tiêu đề, nhãn các ô nhập, placeholder
+   ⚠️ KHÔNG NÊN THAY ĐỔI: asp-action, asp-for, enctype, tên biến
+   ============================================================ *@
+
+@{
+    @* Tiêu đề tab trình duyệt - ✅ CÓ THỂ THAY ĐỔI *@
+    ViewData["Title"] = "Thêm Dịch Vụ Mới";
+    @* Chỉ định dùng layout Admin (có sidebar) *@
+    Layout = "_AdminLayout";
+}
+@* Khai báo kiểu dữ liệu mà View này nhận từ Controller *@
+@model DatDichVuSuaChuaNhaCua.Models.DichVu
+
+<div class="row">
+    <div class="col-lg-7">
+        <div class="card shadow-sm border-0">
+            <div class="card-body p-4">
+                @* enctype="multipart/form-data" = BẮT BUỘC khi form có upload file ảnh
+                   Nếu thiếu dòng này, ảnh sẽ không được gửi lên server *@
+                <form asp-action="ThemDichVu" method="post" enctype="multipart/form-data">
+
+                    @* Dropdown chọn danh mục - asp-items lấy danh sách từ ViewBag.DanhMuc *@
+                    <div class="mb-3">
+                        @* ✅ CÓ THỂ THAY ĐỔI: "Danh mục *" là nhãn hiển thị *@
+                        <label asp-for="MaDanhMuc" class="form-label fw-semibold">Danh mục *</label>
+                        <select asp-for="MaDanhMuc" asp-items="ViewBag.DanhMuc" class="form-select">
+                            <option value="">-- Chọn danh mục --</option>
+                        </select>
+                        @* Hiển thị lỗi nếu không chọn danh mục *@
+                        <span asp-validation-for="MaDanhMuc" class="text-danger small"></span>
+                    </div>
+
+                    @* Ô nhập tên dịch vụ *@
+                    <div class="mb-3">
+                        <label asp-for="TenDichVu" class="form-label fw-semibold">Tên dịch vụ *</label>
+                        @* placeholder = gợi ý hiển thị trong ô khi chưa nhập - ✅ CÓ THỂ THAY ĐỔI *@
+                        <input asp-for="TenDichVu" class="form-control" placeholder="VD: Sửa điện dân dụng" />
+                        <span asp-validation-for="TenDichVu" class="text-danger small"></span>
+                    </div>
+
+                    @* Ô nhập mô tả - rows="4" = chiều cao 4 dòng - ✅ CÓ THỂ THAY ĐỔI số rows *@
+                    <div class="mb-3">
+                        <label asp-for="MoTa" class="form-label fw-semibold">Mô tả</label>
+                        <textarea asp-for="MoTa" class="form-control" rows="4"
+                                  placeholder="Mô tả chi tiết về dịch vụ..."></textarea>
+                    </div>
+
+                    <div class="row g-3">
+                        @* Ô nhập giá tiền *@
+                        <div class="col-md-6">
+                            <label asp-for="GiaTien" class="form-label fw-semibold">Giá (VND) *</label>
+                            @* type="number" = chỉ cho nhập số | min="0" = không cho nhập số âm *@
+                            <input asp-for="GiaTien" class="form-control" type="number" min="0" placeholder="150000" />
+                            <span asp-validation-for="GiaTien" class="text-danger small"></span>
+                        </div>
+                        @* Ô nhập thời gian thực hiện *@
+                        <div class="col-md-6">
+                            <label asp-for="ThoiGian" class="form-label fw-semibold">Thời gian (phút)</label>
+                            <input asp-for="ThoiGian" class="form-control" type="number" min="15" placeholder="60" />
+                        </div>
+                    </div>
+
+                    @* KHU VỰC UPLOAD ẢNH
+                       ✅ CÓ THỂ THAY ĐỔI: Chữ hướng dẫn bên dưới
+                       ⚠️ KHÔNG THAY ĐỔI: name="imageFile" phải trùng với tên tham số trong Controller *@
+                    <div class="mb-3 mt-3">
+                        <label class="form-label fw-semibold">Hình ảnh dịch vụ</label>
+                        @* input type="file" = hiện nút "Chọn tệp" để browse file từ máy tính *@
+                        @* accept="image/*" = chỉ cho chọn file ảnh (jpg, png, gif...) *@
+                        <input type="file" name="anhFile" class="form-control" accept="image/*" />
+                        @* ✅ CÓ THỂ THAY ĐỔI: Chữ gợi ý bên dưới *@
+                        <small class="text-muted">Chấp nhận: .jpg, .png, .gif (để trống nếu không có ảnh)</small>
+                    </div>
+
+                    @* Checkbox bật/tắt dịch vụ *@
+                    <div class="mb-3 form-check">
+                        @* checked = mặc định được tích khi tạo mới *@
+                        <input asp-for="DangHoatDong" class="form-check-input" type="checkbox" checked />
+                        @* ✅ CÓ THỂ THAY ĐỔI: Chữ bên cạnh checkbox *@
+                        <label asp-for="DangHoatDong" class="form-check-label">Đang cung cấp dịch vụ</label>
+                    </div>
+
+                    @* Nút bấm *@
+                    <div class="d-flex gap-2">
+                        @* btn-primary = màu xanh | ✅ CÓ THỂ ĐỔI thành btn-success (xanh lá) hay màu khác *@
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-check-circle me-1"></i>Thêm dịch vụ
+                        </button>
+                        @* Nút Hủy: quay lại trang danh sách *@
+                        <a asp-action="QuanLyDichVu" class="btn btn-outline-secondary">Hủy</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+

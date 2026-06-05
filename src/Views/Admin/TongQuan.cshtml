@@ -1,0 +1,103 @@
+﻿@{
+    ViewData["Title"] = "Quản Trị - Tổng Quan";
+    Layout = "_AdminLayout";
+}
+@model IEnumerable<DatDichVuSuaChuaNhaCua.Models.DonDatLich>
+
+<!-- Thống kê -->
+<div class="row g-3 mb-4">
+    <div class="col-sm-6 col-xl-3">
+        <div class="stat-card stat-blue d-flex justify-content-between align-items-center">
+            <div>
+                <div class="stat-number">@ViewBag.TongDichVu</div>
+                <div class="stat-label">Dịch vụ đang có</div>
+            </div>
+            <i class="bi bi-tools"></i>
+        </div>
+    </div>
+    <div class="col-sm-6 col-xl-3">
+        <div class="stat-card stat-orange d-flex justify-content-between align-items-center">
+            <div>
+                <div class="stat-number">@ViewBag.DonChoXuLy</div>
+                <div class="stat-label">Chờ xác nhận</div>
+            </div>
+            <i class="bi bi-hourglass-split"></i>
+        </div>
+    </div>
+    <div class="col-sm-6 col-xl-3">
+        <div class="stat-card stat-green d-flex justify-content-between align-items-center">
+            <div>
+                <div class="stat-number">@ViewBag.DonHoanThanh</div>
+                <div class="stat-label">Đã hoàn thành</div>
+            </div>
+            <i class="bi bi-check-circle"></i>
+        </div>
+    </div>
+    <div class="col-sm-6 col-xl-3">
+        <div class="stat-card stat-red d-flex justify-content-between align-items-center">
+            <div>
+                <div class="stat-number">@ViewBag.TongKhachHang</div>
+                <div class="stat-label">Khách hàng</div>
+            </div>
+            <i class="bi bi-people"></i>
+        </div>
+    </div>
+</div>
+
+<!-- Đơn mới nhất -->
+<div class="card shadow-sm border-0">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h6 class="mb-0 fw-semibold"><i class="bi bi-clock-history me-2"></i>5 Đơn Đặt Lịch Mới Nhất</h6>
+        <a asp-action="Bookings" class="btn btn-sm btn-outline-primary">Xem tất cả</a>
+    </div>
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead>
+                    <tr>
+                        <th>Mã đơn</th>
+                        <th>Khách hàng</th>
+                        <th>Dịch vụ</th>
+                        <th>Ngày hẹn</th>
+                        <th>Trạng thái</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var b in Model)
+                    {
+                        <tr>
+                            <td>#@b.MaDon</td>
+                            <td>@b.TenKhachHang</td>
+                            <td>@b.DichVu?.TenDichVu</td>
+                            <td>@b.NgayHen.ToString("dd/MM/yyyy")</td>
+                            <td>
+                                <span class="status-badge status-@b.TrangThai">
+                                    @GetStatusLabel(b.TrangThai)
+                                </span>
+                            </td>
+                        </tr>
+                    }
+                    @if (!Model.Any())
+                    {
+                        <tr><td colspan="5" class="text-center text-muted py-4">Chưa có đơn nào</td></tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+@functions {
+    string GetStatusLabel(string s) => s switch
+    {
+        "Pending" => "Chờ xác nhận",
+        "Confirmed" => "Đã xác nhận",
+        "InProgress" => "Đang thực hiện",
+        "Completed" => "Hoàn thành",
+        "Cancelled" => "Đã hủy",
+        _ => s
+    };
+}
+
+
+

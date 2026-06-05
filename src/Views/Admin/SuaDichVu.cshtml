@@ -1,0 +1,98 @@
+﻿@* ============================================================
+   FILE: SuaDichVu.cshtml
+   MỤC ĐÍCH: Form chỉnh sửa dịch vụ (dành cho Admin)
+   ✅ CÓ THỂ THAY ĐỔI: Nhãn, placeholder, chữ hướng dẫn
+   ⚠️ KHÔNG NÊN THAY ĐỔI: asp-action, asp-for, name="imageFile"
+   ============================================================ *@
+
+@{
+    ViewData["Title"] = "Chỉnh Sửa Dịch Vụ";
+    Layout = "_AdminLayout";
+}
+@model DatDichVuSuaChuaNhaCua.Models.DichVu
+
+<div class="row">
+    <div class="col-lg-7">
+        <div class="card shadow-sm border-0">
+            <div class="card-body p-4">
+                @* enctype="multipart/form-data" = bắt buộc để upload ảnh *@
+                <form asp-action="SuaDichVu" method="post" enctype="multipart/form-data">
+                    @* Trường ẩn: giữ lại ID của dịch vụ đang sửa
+                       ⚠️ KHÔNG XÓA: Controller cần MaDichVu để biết đang sửa dịch vụ nào *@
+                    <input type="hidden" asp-for="MaDichVu" />
+                    @* Trường ẩn: giữ lại ngày tạo ban đầu (không bị ghi đè khi sửa) *@
+                    <input type="hidden" asp-for="NgayTao" />
+
+                    <div class="mb-3">
+                        <label asp-for="MaDanhMuc" class="form-label fw-semibold">Danh mục *</label>
+                        <select asp-for="MaDanhMuc" asp-items="ViewBag.DanhMuc" class="form-select">
+                            <option value="">-- Chọn danh mục --</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="TenDichVu" class="form-label fw-semibold">Tên dịch vụ *</label>
+                        @* asp-for="TenDichVu" tự động điền giá trị hiện tại vào ô *@
+                        <input asp-for="TenDichVu" class="form-control" />
+                        <span asp-validation-for="TenDichVu" class="text-danger small"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="MoTa" class="form-label fw-semibold">Mô tả</label>
+                        <textarea asp-for="MoTa" class="form-control" rows="4"></textarea>
+                    </div>
+
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label asp-for="GiaTien" class="form-label fw-semibold">Giá (VND) *</label>
+                            <input asp-for="GiaTien" class="form-control" type="number" min="0" />
+                            <span asp-validation-for="GiaTien" class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <label asp-for="ThoiGian" class="form-label fw-semibold">Thời gian (phút)</label>
+                            <input asp-for="ThoiGian" class="form-control" type="number" min="15" />
+                        </div>
+                    </div>
+
+                    @* KHU VỰC UPLOAD ẢNH MỚI (hoặc giữ ảnh cũ) *@
+                    <div class="mb-3 mt-3">
+                        <label class="form-label fw-semibold">Hình ảnh dịch vụ</label>
+
+                        @* Nếu đã có ảnh: hiển thị ảnh hiện tại *@
+                        @if (!string.IsNullOrEmpty(Model.HinhAnh))
+                        {
+                            <div class="mb-2">
+                                @* ✅ CÓ THỂ THAY ĐỔI: kích thước ảnh preview (width, height) *@
+                                <img src="@Model.HinhAnh" alt="Ảnh hiện tại"
+                                     style="width:120px; height:80px; object-fit:cover; border-radius:6px;" />
+                                <div class="text-muted small mt-1">Ảnh hiện tại — chọn file mới để thay thế</div>
+                            </div>
+                            @* Giữ lại đường dẫn ảnh cũ nếu không upload ảnh mới *@
+                            <input type="hidden" asp-for="HinhAnh" />
+                        }
+
+                        @* Nút chọn file ảnh mới *@
+                        <input type="file" name="anhFile" class="form-control" accept="image/*" />
+                        <small class="text-muted">Để trống nếu muốn giữ ảnh hiện tại</small>
+                    </div>
+
+                    @* Checkbox trạng thái - asp-for tự động tích/bỏ tích theo giá trị hiện tại *@
+                    <div class="mb-3 form-check">
+                        <input asp-for="DangHoatDong" class="form-check-input" type="checkbox" />
+                        <label asp-for="DangHoatDong" class="form-check-label">Đang cung cấp dịch vụ</label>
+                    </div>
+
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-save me-1"></i>Lưu thay đổi
+                        </button>
+                        <a asp-action="QuanLyDichVu" class="btn btn-outline-secondary">Hủy</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+

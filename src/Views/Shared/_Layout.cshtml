@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - FixHome | Dịch Vụ Sửa Chữa Nhà</title>
+    <meta name="description" content="FixHome - Nền tảng đặt dịch vụ sửa chữa nhà cửa uy tín: điện, nước, sơn, mộc và nhiều hơn nữa." />
+
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet" />
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="~/css/site.css" />
+</head>
+<body>
+
+<!-- ===== NAVBAR ===== -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary sticky-top shadow-sm">
+    <div class="container">
+        <!-- Logo -->
+        <a class="navbar-brand fw-bold fs-4" asp-controller="TrangChu" asp-action="Index">
+            <i class="bi bi-house-gear-fill me-2"></i>FixHome
+        </a>
+
+        <!-- Mobile toggle -->
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMain">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <!-- Nav links -->
+        <div class="collapse navbar-collapse" id="navbarMain">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item">
+                    <a class="nav-link" asp-controller="TrangChu" asp-action="Index">
+                        <i class="bi bi-house me-1"></i>Trang chủ
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" asp-controller="DichVu" asp-action="Index">
+                        <i class="bi bi-grid me-1"></i>Dịch vụ
+                    </a>
+                </li>
+            </ul>
+
+            <!-- Thanh tìm kiếm -->
+            <form class="d-flex me-3" asp-controller="TrangChu" asp-action="TimKiem" method="get">
+                <div class="input-group">
+                    <input class="form-control" type="search" name="tuKhoa"
+                           placeholder="Tìm dịch vụ..." style="min-width:180px;" />
+                    <button class="btn btn-warning" type="submit">
+                        <i class="bi bi-search"></i>
+                    </button>
+                </div>
+            </form>
+
+            <!-- User menu -->
+            <ul class="navbar-nav">
+                @if (User.Identity!.IsAuthenticated)
+                {
+                    @if (User.IsInRole("Admin"))
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link" asp-controller="Admin" asp-action="TongQuan">
+                                <i class="bi bi-speedometer2 me-1"></i>Quản trị
+                            </a>
+                        </li>
+                    }
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">
+                            <i class="bi bi-person-circle me-1"></i>@User.Identity.Name
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li>
+                                <a class="dropdown-item" asp-controller="DatLich" asp-action="DonCuaToi">
+                                    <i class="bi bi-calendar-check me-2"></i>Đơn của tôi
+                                </a>
+                            </li>
+                            <li><hr class="dropdown-divider" /></li>
+                            <li>
+                                <a class="dropdown-item text-danger" asp-controller="TaiKhoan" asp-action="DangXuat">
+                                    <i class="bi bi-box-arrow-right me-2"></i>Đăng xuất
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                }
+                else
+                {
+                    <li class="nav-item">
+                        <a class="nav-link" asp-controller="TaiKhoan" asp-action="DangNhap">
+                            <i class="bi bi-box-arrow-in-right me-1"></i>Đăng nhập
+                        </a>
+                    </li>
+                    <li class="nav-item ms-2">
+                        <a class="btn btn-warning btn-sm" asp-controller="TaiKhoan" asp-action="DangKy">
+                            <i class="bi bi-person-plus me-1"></i>Đăng ký
+                        </a>
+                    </li>
+                }
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<!-- ===== THÔNG BÁO TOAST ===== -->
+<div class="container mt-3">
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="bi bi-check-circle-fill me-2"></i>@TempData["Success"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i>@TempData["Error"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+</div>
+
+<!-- ===== NỘI DUNG CHÍNH ===== -->
+<main>
+    @RenderBody()
+</main>
+
+<!-- ===== FOOTER ===== -->
+<footer class="footer-section mt-5">
+    <div class="container py-4">
+        <div class="row">
+            <div class="col-md-4 mb-3">
+                <h5 class="text-warning fw-bold">
+                    <i class="bi bi-house-gear-fill me-2"></i>FixHome
+                </h5>
+                <p class="text-white-50 small">
+                    Nền tảng đặt dịch vụ sửa chữa nhà cửa uy tín, nhanh chóng và chuyên nghiệp.
+                </p>
+            </div>
+            <div class="col-md-4 mb-3">
+                <h6 class="text-white fw-semibold">Dịch vụ</h6>
+                <ul class="list-unstyled">
+                    <li><a class="footer-link" asp-controller="DichVu" asp-action="Index">Tất cả dịch vụ</a></li>
+                    <li><a class="footer-link" asp-controller="DatLich" asp-action="DonCuaToi">Đơn của tôi</a></li>
+                </ul>
+            </div>
+            <div class="col-md-4 mb-3">
+                <h6 class="text-white fw-semibold">Liên hệ</h6>
+                <p class="text-white-50 small mb-1"><i class="bi bi-telephone me-2"></i>0352 486 153</p>
+                <p class="text-white-50 small mb-1"><i class="bi bi-envelope me-2"></i>170124846@rdi.edu.vn</p>
+                <p class="text-white-50 small"><i class="bi bi-geo-alt me-2"></i>TP. Đồng Nai</p>
+            </div>
+        </div>
+        <hr class="border-secondary" />
+        <p class="text-center text-white-50 small mb-1">
+            <strong>Sinh viên:</strong> Văn Bá <span class="mx-2">|</span> <strong>Lớp:</strong> DK32324 <span class="mx-2">|</span> <strong>GVHD:</strong> TS. Đoàn Văn Miền
+        </p>
+        <p class="text-center text-white-50 small mb-0">
+            <strong>Đề tài:</strong> Xây dựng website đặt dịch vụ sửa chữa nhà cửa
+        </p>
+    </div>
+</footer>
+
+<!-- Bootstrap 5 JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+@RenderSection("Scripts", required: false)
+</body>
+</html>

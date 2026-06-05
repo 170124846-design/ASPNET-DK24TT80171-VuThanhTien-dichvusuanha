@@ -1,0 +1,80 @@
+﻿@{
+    ViewData["Title"] = "Quản Lý Dịch Vụ";
+    Layout = "_AdminLayout";
+}
+@model IEnumerable<DatDichVuSuaChuaNhaCua.Models.DichVu>
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h6 class="mb-0">Tổng: <strong>@Model.Count()</strong> dịch vụ</h6>
+    <a asp-action="ThemDichVu" class="btn btn-warning">
+        <i class="bi bi-plus-circle me-1"></i>Thêm dịch vụ mới
+    </a>
+</div>
+
+<div class="card shadow-sm border-0">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Tên dịch vụ</th>
+                        <th>Danh mục</th>
+                        <th>Giá (đ)</th>
+                        <th>Thời gian</th>
+                        <th>Trạng thái</th>
+                        <th>Thao tác</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var svc in Model)
+                    {
+                        <tr class="@(!svc.DangHoatDong ? "table-secondary" : "")">
+                            <td>@svc.MaDichVu</td>
+                            <td>
+                                <div class="fw-semibold">@svc.TenDichVu</div>
+                                <small class="text-muted">
+                                    @(svc.MoTa?.Length > 50 ? svc.MoTa.Substring(0, 50) + "..." : svc.MoTa)
+                                </small>
+                            </td>
+                            <td>@svc.DanhMuc?.TenDanhMuc</td>
+                            <td>@svc.GiaTien.ToString("N0")</td>
+                            <td>@svc.ThoiGian phút</td>
+                            <td>
+                                @if (svc.DangHoatDong)
+                                {
+                                    <span class="badge bg-success">Đang cung cấp</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-secondary">Đã ẩn</span>
+                                }
+                            </td>
+                            <td>
+                                <a asp-action="SuaDichVu" asp-route-id="@svc.MaDichVu"
+                                   class="btn btn-sm btn-outline-primary me-1">
+                                    <i class="bi bi-pencil"></i>
+                                </a>
+                                <form asp-action="XoaDichVu" asp-route-id="@svc.MaDichVu"
+                                      method="post" class="d-inline"
+                                      onsubmit="return confirm('Xóa dịch vụ này?')">
+                                    @Html.AntiForgeryToken()
+                                    <button type="submit" class="btn btn-sm btn-outline-danger">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                    @if (!Model.Any())
+                    {
+                        <tr><td colspan="7" class="text-center text-muted py-4">Chưa có dịch vụ nào</td></tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+
+

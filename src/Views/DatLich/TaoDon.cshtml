@@ -1,0 +1,90 @@
+﻿@{
+    ViewData["Title"] = "Đặt Lịch Dịch Vụ";
+}
+@model DatDichVuSuaChuaNhaCua.Models.ViewModels.BookingCreateViewModel
+
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-7">
+            <!-- Thông tin dịch vụ được chọn -->
+            <div class="card border-primary mb-4">
+                <div class="card-body d-flex justify-content-between align-items-center">
+                    <div>
+                        <small class="text-muted">Dịch vụ đã chọn</small>
+                        <h5 class="fw-bold mb-0">@Model.TenDichVu</h5>
+                    </div>
+                    <span class="price-badge fs-5">@Model.GiaDichVu.ToString("N0") đ</span>
+                </div>
+            </div>
+
+            <!-- Form đặt lịch -->
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-primary text-white py-3">
+                    <h5 class="mb-0"><i class="bi bi-calendar-plus me-2"></i>Thông Tin Đặt Lịch</h5>
+                </div>
+                <div class="card-body p-4">
+                    <form asp-action="TaoDon" method="post">
+                        <input type="hidden" asp-for="MaDichVu" />
+                        <input type="hidden" asp-for="TenDichVu" />
+                        <input type="hidden" asp-for="GiaDichVu" />
+
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label asp-for="TenKhachHang" class="form-label fw-semibold"></label>
+                                <input asp-for="TenKhachHang" class="form-control" placeholder="Họ và tên người nhận" />
+                                <span asp-validation-for="TenKhachHang" class="text-danger small"></span>
+                            </div>
+                            <div class="col-md-6">
+                                <label asp-for="SdtKhachHang" class="form-label fw-semibold"></label>
+                                <input asp-for="SdtKhachHang" class="form-control" placeholder="0901234567" />
+                                <span asp-validation-for="SdtKhachHang" class="text-danger small"></span>
+                            </div>
+                            <div class="col-md-6">
+                                <label asp-for="NgayHen" class="form-label fw-semibold"></label>
+                                <input asp-for="NgayHen" class="form-control" type="date"
+                                       min="@DateTime.Now.AddDays(1).ToString("yyyy-MM-dd")" />
+                                <span asp-validation-for="NgayHen" class="text-danger small"></span>
+                            </div>
+                            <div class="col-md-6">
+                                <label asp-for="KhungGio" class="form-label fw-semibold"></label>
+                                <select asp-for="KhungGio" class="form-select">
+                                    <option value="">-- Chọn khung giờ --</option>
+                                    <option value="Sáng (7:00 - 12:00)">Sáng (7:00 - 12:00)</option>
+                                    <option value="Chiều (13:00 - 17:00)">Chiều (13:00 - 17:00)</option>
+                                    <option value="Tối (18:00 - 20:00)">Tối (18:00 - 20:00)</option>
+                                </select>
+                                <span asp-validation-for="KhungGio" class="text-danger small"></span>
+                            </div>
+                            <div class="col-12">
+                                <label asp-for="DiaChi" class="form-label fw-semibold"></label>
+                                <input asp-for="DiaChi" class="form-control"
+                                       placeholder="Số nhà, tên đường, phường/xã, quận/huyện, tỉnh/thành phố" />
+                                <span asp-validation-for="DiaChi" class="text-danger small"></span>
+                            </div>
+                            <div class="col-12">
+                                <label asp-for="GhiChu" class="form-label fw-semibold"></label>
+                                <textarea asp-for="GhiChu" class="form-control" rows="3"
+                                          placeholder="Mô tả vấn đề cần sửa chữa, yêu cầu đặc biệt..."></textarea>
+                            </div>
+                        </div>
+
+                        <hr class="my-4" />
+                        <div class="d-flex justify-content-between align-items-center">
+                            <a asp-controller="DichVu" asp-action="ChiTiet"
+                               asp-route-id="@Model.MaDichVu"
+                               class="btn btn-outline-secondary">
+                                <i class="bi bi-arrow-left me-1"></i>Quay lại
+                            </a>
+                            <button type="submit" class="btn btn-warning btn-lg">
+                                <i class="bi bi-check-circle me-2"></i>Xác nhận đặt lịch
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+

@@ -1,0 +1,66 @@
+@{
+    ViewData["Title"] = "Thêm Danh Mục";
+    Layout = "_AdminLayout";
+}
+@model DatDichVuSuaChuaNhaCua.Models.DanhMuc
+
+<div class="row">
+    <div class="col-lg-6">
+        <div class="card shadow-sm border-0">
+            <div class="card-body p-4">
+                <form asp-action="ThemDanhMuc" method="post">
+                    <div class="mb-3">
+                        <label asp-for="TenDanhMuc" class="form-label fw-semibold">Tên danh mục *</label>
+                        <input asp-for="TenDanhMuc" class="form-control" placeholder="VD: Dịch vụ điện" />
+                        <span asp-validation-for="TenDanhMuc" class="text-danger small"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="MoTa" class="form-label fw-semibold">Mô tả</label>
+                        <textarea asp-for="MoTa" class="form-control" rows="3" placeholder="Mô tả ngắn..."></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="LopBieuTuong" class="form-label fw-semibold">Chọn Biểu Tượng</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i id="iconPreview" class="bi bi-tools fs-5"></i></span>
+                            <select asp-for="LopBieuTuong" class="form-select" id="iconInput">
+                                <option value="bi-tools">Công cụ sửa chữa (bi-tools)</option>
+                                <option value="bi-lightning-charge">Điện (bi-lightning-charge)</option>
+                                <option value="bi-droplet">Nước / Ống nước (bi-droplet)</option>
+                                <option value="bi-house">Nhà cửa (bi-house)</option>
+                                <option value="bi-brush">Sơn tường (bi-brush)</option>
+                                <option value="bi-hammer">Búa đinh (bi-hammer)</option>
+                                <option value="bi-fan">Quạt / Điều hòa (bi-fan)</option>
+                                <option value="bi-wrench">Cờ lê (bi-wrench)</option>
+                                <option value="bi-stars">Vệ sinh / Làm sạch (bi-stars)</option>
+                                <option value="bi-shield-check">Bảo hành / An toàn (bi-shield-check)</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="mb-3 form-check">
+                        <input asp-for="DangHoatDong" class="form-check-input" type="checkbox" checked />
+                        <label asp-for="DangHoatDong" class="form-check-label">Hiển thị trên trang chủ</label>
+                    </div>
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-check-circle me-1"></i>Thêm danh mục
+                        </button>
+                        <a asp-action="QuanLyDanhMuc" class="btn btn-outline-secondary">Hủy</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Preview icon khi gõ
+        document.getElementById('iconInput').addEventListener('input', function() {
+            var icon = document.getElementById('iconPreview');
+            icon.className = 'bi ' + this.value + ' fs-5';
+        });
+    </script>
+}
+
+
+

@@ -1,0 +1,124 @@
+﻿@{
+    ViewData["Title"] = Model.TenDichVu;
+}
+@model DatDichVuSuaChuaNhaCua.Models.DichVu
+
+<!-- Breadcrumb -->
+<div class="breadcrumb-section">
+    <div class="container">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-0 small">
+                <li class="breadcrumb-item"><a asp-controller="TrangChu" asp-action="Index">Trang chủ</a></li>
+                <li class="breadcrumb-item"><a asp-controller="DichVu" asp-action="Index">Dịch vụ</a></li>
+                <li class="breadcrumb-item active">@Model.TenDichVu</li>
+            </ol>
+        </nav>
+    </div>
+</div>
+
+<div class="container py-4">
+    <div class="row">
+        <!-- Chi tiết dịch vụ -->
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-sm">
+                @if (!string.IsNullOrEmpty(Model.HinhAnh))
+                {
+                    <img src="@Model.HinhAnh" class="card-img-top" alt="@Model.DanhMuc!.TenDanhMuc"
+                         style="max-height:350px; object-fit:cover;" />
+                }
+                else
+                {
+                    <div class="service-img-placeholder" style="height:220px;">
+                        <i class="bi bi-tools" style="font-size:5rem;"></i>
+                    </div>
+                }
+                <div class="card-body p-4">
+                    <span class="badge bg-primary mb-2">
+                        <i class="bi @Model.DanhMuc?.LopBieuTuong me-1"></i>@Model.DanhMuc?.TenDanhMuc
+                    </span>
+                    <h2 class="fw-bold">@Model.TenDichVu</h2>
+
+                    <div class="d-flex gap-4 my-3">
+                        <div>
+                            <small class="text-muted d-block">Giá tham khảo</small>
+                            <span class="fs-4 fw-bold text-warning">@Model.GiaTien.ToString("N0") đ</span>
+                        </div>
+                        <div>
+                            <small class="text-muted d-block">Thời gian</small>
+                            <span class="fs-5 fw-semibold">
+                                <i class="bi bi-clock text-primary me-1"></i>~@Model.ThoiGian phút
+                            </span>
+                        </div>
+                    </div>
+
+                    <h5 class="fw-semibold mt-4">Mô tả dịch vụ</h5>
+                    <p class="text-muted">@(Model.MoTa ?? "Chưa có mô tả chi tiết.")</p>
+
+                    <!-- Nút đặt lịch -->
+                    <div class="mt-4">
+                        @if (User.Identity!.IsAuthenticated && !User.IsInRole("Admin"))
+                        {
+                            <a asp-controller="DatLich" asp-action="TaoDon"
+                               asp-route-MaDichVu="@Model.MaDichVu"
+                               class="btn btn-warning btn-lg me-3">
+                                <i class="bi bi-calendar-plus me-2"></i>Đặt lịch ngay
+                            </a>
+                        }
+                        else if (!User.Identity.IsAuthenticated)
+                        {
+                            <a asp-controller="TaiKhoan" asp-action="DangNhap"
+                               asp-route-returnUrl="@Url.Action("Detail", "Service", new { id = Model.MaDichVu })"
+                               class="btn btn-warning btn-lg me-3">
+                                <i class="bi bi-calendar-plus me-2"></i>Đặt lịch ngay
+                            </a>
+                            <small class="text-muted">(Cần đăng nhập để đặt lịch)</small>
+                        }
+                        <a asp-controller="DichVu" asp-action="Index" class="btn btn-outline-secondary">
+                            <i class="bi bi-arrow-left me-1"></i>Quay lại
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sidebar: Dịch vụ liên quan -->
+        <div class="col-lg-4">
+            <h5 class="fw-semibold mb-3">Dịch vụ liên quan</h5>
+            @if (ViewBag.DvLienQuan != null)
+            {
+                @foreach (var rel in (IEnumerable<DatDichVuSuaChuaNhaCua.Models.DichVu>)ViewBag.DvLienQuan)
+                {
+                    <div class="card mb-3 service-card">
+                        <div class="card-body">
+                            <h6 class="fw-semibold mb-1">@rel.TenDichVu</h6>
+                            <p class="text-muted small mb-2">
+                                @(rel.MoTa?.Length > 60 ? rel.MoTa.Substring(0, 60) + "..." : rel.MoTa)
+                            </p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="price-badge">@rel.GiaTien.ToString("N0") đ</span>
+                                <a asp-controller="DichVu" asp-action="ChiTiet" asp-route-id="@rel.MaDichVu"
+                                   class="btn btn-sm btn-outline-primary">Xem</a>
+                            </div>
+                        </div>
+                    </div>
+                }
+            }
+
+            <!-- Thông tin liên hệ nhanh -->
+            <div class="card border-primary mt-3">
+                <div class="card-body">
+                    <h6 class="fw-semibold text-primary mb-2">
+                        <i class="bi bi-headset me-1"></i>Cần tư vấn?
+                    </h6>
+                    <p class="small text-muted mb-1">Gọi ngay để được hỗ trợ:</p>
+                    <p class="fw-bold fs-5 mb-0">
+                        <i class="bi bi-telephone-fill text-warning me-1"></i>1900 1234
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+

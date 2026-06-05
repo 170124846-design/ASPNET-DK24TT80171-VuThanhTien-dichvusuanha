@@ -1,0 +1,124 @@
+@{
+    ViewData["Title"] = "Quản Lý Đơn Đặt Lịch";
+    Layout = "_AdminLayout";
+}
+@model IEnumerable<DatDichVuSuaChuaNhaCua.Models.DonDatLich>
+
+<!-- Lọc theo trạng thái -->
+<div class="mb-3 d-flex flex-wrap gap-2">
+    <a asp-action="DonDatLich" class="btn btn-sm @(ViewBag.TrangThai == null ? "btn-primary" : "btn-outline-primary")">
+        Tất cả (@Model.Count())
+    </a>
+    @foreach (var (status, label) in new[] {
+        ("Pending","Chờ xác nhận"), ("Confirmed","Đã xác nhận"),
+        ("InProgress","Đang thực hiện"), ("Completed","Hoàn thành"), ("Cancelled","Đã hủy")
+    })
+    {
+        <a asp-action="DonDatLich" asp-route-status="@status"
+           class="btn btn-sm @(ViewBag.TrangThai == status ? "btn-primary" : "btn-outline-secondary")">
+            @label (@Model.Count(b => b.TrangThai == status))
+        </a>
+    }
+</div>
+
+<div class="card shadow-sm border-0">
+    <div class="card-body p-0">
+        <div class="table-responsive" style="min-height: 400px;">
+            <table class="table table-hover mb-0">
+                <thead>
+                    <tr>
+                        <th>Mã đơn</th>
+                        <th>Khách hàng</th>
+                        <th>Dịch vụ</th>
+                        <th>Ngày hẹn</th>
+                        <th>Địa chỉ</th>
+                        <th>Tổng tiền</th>
+                        <th>Trạng thái</th>
+                        <th>Cập nhật</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var b in Model)
+                    {
+                        <tr>
+                            <td class="fw-semibold">#@b.MaDon</td>
+                            <td>
+                                <div>@b.TenKhachHang</div>
+                                <small class="text-muted">@b.SdtKhachHang</small>
+                            </td>
+                            <td>
+                                <small>@b.DichVu?.TenDichVu</small>
+                            </td>
+                            <td>
+                                <div>@b.NgayHen.ToString("dd/MM/yyyy")</div>
+                                <small class="text-muted">@b.KhungGio</small>
+                            </td>
+                            <td><small class="text-muted">@b.DiaChi</small></td>
+                            <td class="fw-semibold text-warning">@b.TongTien.ToString("N0")</td>
+                            <td>
+                                <span class="status-badge status-@b.TrangThai">
+                                    @GetStatusLabel(b.TrangThai)
+                                </span>
+                            </td>
+                            <td>
+                                <!-- Dropdown cập nhật trạng thái -->
+                                @if (b.TrangThai != "Completed" && b.TrangThai != "Cancelled")
+                                {
+                                    <div class="dropdown">
+                                        <button class="btn btn-sm btn-outline-primary dropdown-toggle" data-bs-toggle="dropdown">
+                                            Đổi
+                                        </button>
+                                        <ul class="dropdown-menu">
+                                            @foreach (var (s, l) in new[] {
+                                                ("Confirmed","✅ Xác nhận"),
+                                                ("InProgress","🔧 Đang thực hiện"),
+                                                ("Completed","✔️ Hoàn thành"),
+                                                ("Cancelled","❌ Hủy")
+                                            })
+                                            {
+                                                if (s != b.TrangThai)
+                                                {
+                                                    <li>
+                                                        <form asp-action="CapNhatTrangThaiDonDatLich" method="post">
+                                                            @Html.AntiForgeryToken()
+                                                            <input type="hidden" name="id" value="@b.MaDon" />
+                                                            <input type="hidden" name="status" value="@s" />
+                                                            <button type="submit" class="dropdown-item">@l</button>
+                                                        </form>
+                                                    </li>
+                                                }
+                                            }
+                                        </ul>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <small class="text-muted">Đã kết thúc</small>
+                                }
+                            </td>
+                        </tr>
+                    }
+                    @if (!Model.Any())
+                    {
+                        <tr><td colspan="8" class="text-center text-muted py-4">Không có đơn nào</td></tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+@functions {
+    string GetStatusLabel(string s) => s switch
+    {
+        "Pending" => "Chờ xác nhận",
+        "Confirmed" => "Đã xác nhận",
+        "InProgress" => "Đang thực hiện",
+        "Completed" => "Hoàn thành",
+        "Cancelled" => "Đã hủy",
+        _ => s
+    };
+}
+
+
+
