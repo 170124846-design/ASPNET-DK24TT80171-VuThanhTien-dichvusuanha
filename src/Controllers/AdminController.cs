@@ -214,7 +214,6 @@ namespace DatDichVuSuaChuaNhaCua.Controllers
             return RedirectToAction("DonDatLich");
         }
 
-        // Deleted LuuAnh method
     }
 }
 

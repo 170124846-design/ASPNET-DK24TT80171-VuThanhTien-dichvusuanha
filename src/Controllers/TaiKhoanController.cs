@@ -115,7 +115,6 @@ namespace DatDichVuSuaChuaNhaCua.Controllers
             return RedirectToAction("Index", "TrangChu");
         }
 
-        // Deleted MaHoa method
     }
 }
 
