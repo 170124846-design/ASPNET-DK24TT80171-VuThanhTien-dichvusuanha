@@ -1,0 +1,66 @@
+﻿@model IEnumerable<DatDichVuSuaChuaNhaCua.Models.DanhGia>
+@{
+    ViewData["Title"] = "Quản lý Đánh Giá";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="card shadow border-0 rounded-3">
+    <div class="card-header bg-white py-3">
+        <h5 class="mb-0 fw-bold text-primary"><i class="bi bi-star-half me-2"></i>Danh sách Đánh giá từ Khách hàng</h5>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle">
+                <thead class="table-light">
+                    <tr>
+                        <th>Mã Đơn</th>
+                        <th>Khách Hàng</th>
+                        <th>Dịch Vụ</th>
+                        <th>Đánh Giá</th>
+                        <th>Bình Luận</th>
+                        <th>Ngày Đánh Giá</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model != null && Model.Any())
+                    {
+                        foreach (var item in Model)
+                        {
+                            <tr>
+                                <td><span class="badge bg-secondary">#@item.MaDon</span></td>
+                                <td>
+                                    <div class="fw-bold">@item.DonDatLich?.NguoiDung?.HoTen</div>
+                                    <small class="text-muted d-block">Số điện thoại: @item.DonDatLich?.NguoiDung?.SoDienThoai</small>
+                                    <small class="text-muted d-block">Địa chỉ: @item.DonDatLich?.DiaChi</small>
+                                </td>
+                                <td>@item.DonDatLich?.DichVu?.TenDichVu</td>
+                                <td>
+                                    <!-- Vòng lặp in ra số lượng ngôi sao tương ứng -->
+                                    <span class="text-warning">
+                                        @for (int i = 0; i < item.SoSao; i++)
+                                        {
+                                            <i class="bi bi-star-fill"></i>
+                                        }
+                                    </span>
+                                </td>
+                                <td style="max-width: 300px;" class="text-wrap fst-italic">
+                                    @(string.IsNullOrEmpty(item.BinhLuan) ? "-- Không có bình luận --" : item.BinhLuan)
+                                </td>
+                                <td>@item.NgayDanhGia.ToString("dd/MM/yyyy HH:mm")</td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="6" class="text-center py-5 text-muted">
+                                <i class="bi bi-inbox fs-1 d-block mb-3"></i>
+                                Chưa có bài đánh giá nào.
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

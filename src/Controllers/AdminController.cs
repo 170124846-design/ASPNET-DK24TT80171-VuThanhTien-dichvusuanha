@@ -213,6 +213,21 @@ namespace DatDichVuSuaChuaNhaCua.Controllers
             }
             return RedirectToAction("DonDatLich");
         }
+        //  QUẢN LÝ ĐÁNH GIÁ 
+
+        public async Task<IActionResult> QuanLyDanhGia()
+        {
+            // Dùng Include và ThenInclude để nhặt toàn bộ thông tin Đơn, Khách hàng, Dịch vụ đi kèm với bài đánh giá
+            var ds = await db.DanhGia
+                .Include(dg => dg.DonDatLich)
+                    .ThenInclude(d => d!.NguoiDung)
+                .Include(dg => dg.DonDatLich)
+                    .ThenInclude(d => d!.DichVu)
+                .OrderByDescending(dg => dg.NgayDanhGia)
+                .ToListAsync();
+
+            return View(ds);
+        }
 
     }
 }

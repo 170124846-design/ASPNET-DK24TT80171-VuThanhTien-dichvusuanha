@@ -1,0 +1,49 @@
+﻿@model DatDichVuSuaChuaNhaCua.Models.DanhGia
+@{
+    ViewData["Title"] = "Thêm Đánh Giá";
+}
+
+<h1>Thêm Đánh Giá</h1>
+<h4>Dịch vụ: @ViewBag.TenDichVu</h4>
+<hr />
+
+<div class="row mt-5">
+    <div class="col-md-6 offset-md-1">
+        <form asp-action="ThemDanhGia">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <!-- Chỗ này ẩn Mã Đơn để đẩy ngầm xuống server -->
+            <input type="hidden" asp-for="MaDon" />
+
+            <div class="form-group mb-3">
+                <label asp-for="SoSao" class="control-label fw-bold">Mức độ hài lòng</label>
+                <select asp-for="SoSao" class="form-control">
+                    <option value="">-- Chọn số sao (1-5) --</option>
+                    <option value="5">5 Sao - Tuyệt vời</option>
+                    <option value="4">4 Sao - Tốt</option>
+                    <option value="3">3 Sao - Bình thường</option>
+                    <option value="2">2 Sao - Kém</option>
+                    <option value="1">1 Sao - Rất tệ</option>
+                </select>
+                <!-- Dòng này sẽ hiển thị chữ màu đỏ nếu không chọn -->
+                <span asp-validation-for="SoSao" class="text-danger"></span>
+            </div>
+
+            <div class="form-group mb-3">
+                <label asp-for="BinhLuan" class="control-label fw-bold"></label>
+                <textarea asp-for="BinhLuan" class="form-control" rows="3"></textarea>
+                <span asp-validation-for="BinhLuan" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <input type="submit" value="Lưu đánh giá" class="btn btn-primary" />
+                <a asp-action="DonCuaToi" class="btn btn-secondary ms-2">Trở về</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

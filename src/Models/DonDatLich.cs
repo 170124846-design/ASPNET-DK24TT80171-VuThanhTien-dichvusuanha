@@ -61,6 +61,8 @@ namespace DatDichVuSuaChuaNhaCua.Models
 
         public NguoiDung? NguoiDung { get; set; }
         public DichVu? DichVu { get; set; }
+        // Lưu đánh giá của khách hàng, dùng để kiểm tra xem khách hàng đã đánh giá chưa
+        public virtual ICollection<DanhGia> DanhGias { get; set; } = new List<DanhGia>();
     }
 }
 

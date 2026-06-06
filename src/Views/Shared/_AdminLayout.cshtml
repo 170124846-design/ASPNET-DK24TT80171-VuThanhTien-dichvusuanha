@@ -70,9 +70,12 @@
                asp-controller="Admin" asp-action="DonDatLich">
                 <i class="bi bi-calendar-check me-2"></i>Đơn đặt lịch
             </a>
+                        <a class="nav-link @(ViewContext.RouteData.Values["action"]?.ToString() == "QuanLyDanhGia" ? "active" : "")"
+               asp-controller="Admin" asp-action="QuanLyDanhGia">
+                <i class="bi bi-star-half me-2 text-warning"></i>Quản lý Đánh giá
+            </a>
         </nav>
     </div>
-
     <!-- Main content -->
     <div class="flex-grow-1 p-4" style="min-height:calc(100vh - 56px);">
         <!-- Page title -->

@@ -89,6 +89,7 @@ namespace DatDichVuSuaChuaNhaCua.Controllers
             var dsDon = await db.DonDatLich
                 .Include(b => b.DichVu)
                     .ThenInclude(s => s!.DanhMuc)
+                .Include(b => b.DanhGias)     
                 .Where(b => b.MaNguoiDung == maND)
                 .OrderByDescending(b => b.NgayTao)
                 .ToListAsync();
@@ -122,6 +123,68 @@ namespace DatDichVuSuaChuaNhaCua.Controllers
 
             TempData["Success"] = "Đã hủy đơn thành công!";
             return RedirectToAction("DonCuaToi");
+        }
+        // TÍNH NĂNG ĐÁNH GIÁ DỊCH VỤ
+
+        // 1. Hiển thị form đánh giá
+        [HttpGet]
+        public async Task<IActionResult> ThemDanhGia(int maDon)
+        {
+            int maND = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+
+            // Bảo mật: Kiểm tra đơn hàng có đúng là của khách này không và đã hoàn thành chưa
+            var don = await db.DonDatLich
+                .Include(b => b.DanhGias)
+                .Include(b => b.DichVu)
+                .FirstOrDefaultAsync(b => b.MaDon == maDon && b.MaNguoiDung == maND);
+
+            if (don == null || don.TrangThai != "Completed")
+            {
+                TempData["Error"] = "Đơn hàng không hợp lệ hoặc chưa hoàn thành!";
+                return RedirectToAction("DonCuaToi");
+            }
+
+            // Ngăn chặn "spam": Nếu đã đánh giá rồi thì trả về trang cũ
+            if (don.DanhGias != null && don.DanhGias.Any())
+            {
+                TempData["Error"] = "Bạn đã đánh giá đơn hàng này rồi!";
+                return RedirectToAction("DonCuaToi");
+            }
+
+            // Gửi tên dịch vụ ra giao diện để khách biết mình đang đánh giá cái gì
+            ViewBag.TenDichVu = don.DichVu?.TenDichVu;
+
+            // Khởi tạo một mẫu đánh giá mới với MaDon đã biết, để khi khách gửi form thì có đủ thông tin để lưu vào Database
+            var model = new DanhGia { MaDon = maDon };
+            return View(model);
+        }
+
+        // 2. Nhận dữ liệu đánh giá từ khách hàng và lưu vào Database
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ThemDanhGia(DanhGia model)
+        {
+            // Kiểm tra xem khách có quên bấm chọn Sao không (Model Validation)
+            if (ModelState.IsValid)
+            {
+                int maND = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+                var don = await db.DonDatLich.FirstOrDefaultAsync(b => b.MaDon == model.MaDon && b.MaNguoiDung == maND);
+
+                if (don != null && don.TrangThai == "Completed")
+                {
+                    model.NgayDanhGia = DateTime.Now;
+                    db.DanhGia.Add(model); // Lưu dữ liệu thật vào Database
+                    await db.SaveChangesAsync();
+
+                    TempData["Success"] = "Cảm ơn bạn đã gửi đánh giá!";
+                    return RedirectToAction("DonCuaToi");
+                }
+            }
+
+            // Nếu khách quên chọn Sao, trả lại mẫu đánh giá để khách chọn lại và báo lỗi màu đỏ
+            var donDat = await db.DonDatLich.Include(b => b.DichVu).FirstOrDefaultAsync(b => b.MaDon == model.MaDon);
+            ViewBag.TenDichVu = donDat?.DichVu?.TenDichVu;
+            return View(model);
         }
     }
 }

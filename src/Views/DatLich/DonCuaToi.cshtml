@@ -67,6 +67,30 @@
                                             </button>
                                         </form>
                                     }
+                                    <!-- Nút Đánh giá và Hiển thị Đánh giá (chỉ khi Completed) -->
+                                    @if (don.TrangThai == "Completed")
+                                    {
+                                        if (don.DanhGias != null && don.DanhGias.Any())
+                                        {
+                                            var dg = don.DanhGias.First();
+                                            <div class="mt-2 p-2 bg-light rounded border border-warning text-start">
+                                                <span class="text-warning d-block mb-1">
+                                                    @for (int i = 0; i < dg.SoSao; i++)
+                                                    {
+                                                        <i class="bi bi-star-fill"></i>
+                                                    }
+                                                </span>
+                                                <small class="d-block text-muted fst-italic">"@dg.BinhLuan"</small>
+                                            </div>
+                                        }
+                                        else
+                                        {
+                                            <a asp-controller="DatLich" asp-action="ThemDanhGia" asp-route-maDon="@don.MaDon" class="btn btn-warning btn-sm mt-2 w-100">
+                                                <i class="bi bi-star-fill me-1"></i>Đánh giá dịch vụ
+                                            </a>
+                                        }
+                                    }
+
                                 </div>
                             </div>
                             @if (!string.IsNullOrEmpty(don.GhiChu))
