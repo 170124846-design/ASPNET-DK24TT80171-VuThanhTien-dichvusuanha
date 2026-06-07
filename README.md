@@ -76,9 +76,10 @@ Dự án cung cấp sẵn 2 phương án để khởi tạo CSDL. Vui lòng ch�
 4. Nhấn chuột phải vào thư mục **Databases** ở cột trái, chọn **Refresh** để kiểm tra CSDL đã xuất hiện.
 
 **▶ Cách 2: Restore từ file Backup .bak**
+- Lưu ý: Copy file DatDichVuSuaChuaNhaCua.bak ra thẳng ổ C:\ (Để SSMS không bị lỗi ẩn file).
 1. Mở SSMS, nhấp chuột phải vào thư mục **Databases** chọn **Restore Database...**
 2. Tích chọn vào mục **Device**, bấm nút `...` (3 chấm).
-3. Bấm nút **Add** và trỏ tới file **`setup/DatDichVuSuaChuaNhaCua.bak`**.
+3. Bấm nút **Add** và trỏ tới file **`setup/DatDichVuSuaChuaNhaCua.bak`** đã copy ra ở ổ C:\.
 4. Bấm **OK** ở các cửa sổ để tiến hành khôi phục CSDL.
 
 #### Bước 3: Cấu hình kết nối Database
