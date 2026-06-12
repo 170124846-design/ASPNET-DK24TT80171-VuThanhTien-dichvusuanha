@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -91,6 +91,14 @@ namespace DatDichVuSuaChuaNhaCua.Controllers
             var dm = await db.DanhMuc.FindAsync(id);
             if (dm != null)
             {
+                // Kiểm tra xem danh mục này có dịch vụ nào đang liên kết không
+                bool hasServices = await db.DichVu.AnyAsync(s => s.MaDanhMuc == id);
+                if (hasServices)
+                {
+                    TempData["Error"] = "Lỗi: Không thể xóa danh mục này vì vẫn còn dịch vụ bên trong!";
+                    return RedirectToAction("QuanLyDanhMuc");
+                }
+
                 db.DanhMuc.Remove(dm);
                 await db.SaveChangesAsync();
                 TempData["Success"] = "Đã xóa danh mục!";
